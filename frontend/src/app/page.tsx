@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { Box, Container, useToast } from "@chakra-ui/react";
 import CourseForm from "../components/CourseForm";
 import CourseList from "../components/CourseList";
-import Navbar from "../components/UI/wNavbar"; // Ajuste o caminho se necessário
+import Navbar from "../components/UI/Navbar"; // Ajuste o caminho se necessário
 import { useRouter } from "next/navigation"; // Correto para Next.js
 
 export default function Home() {
