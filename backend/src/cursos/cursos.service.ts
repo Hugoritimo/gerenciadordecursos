@@ -2,28 +2,30 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Curso } from './curso.entity/curso.entity';
+import { Curso } from './curso.entity';
 
 @Injectable()
 export class CursosService {
     constructor(
         @InjectRepository(Curso)
-        private cursosRepository: Repository<Curso>,
+        private cursoRepository: Repository<Curso>,
     ) { }
 
-    findAll(): Promise<Curso[]> {
-        return this.cursosRepository.find();
+    async create(cursoData: Curso): Promise<Curso> {
+        console.log('Salvando curso no banco de dados:', cursoData); // Log para verificar
+        return this.cursoRepository.save(cursoData);
     }
 
-    findOne(id: number): Promise<Curso> {
-        return this.cursosRepository.findOne({ where: { id } });
+    async findAll(): Promise<Curso[]> {
+        return this.cursoRepository.find();
     }
 
-    create(curso: Curso): Promise<Curso> {
-        return this.cursosRepository.save(curso);
+    async update(id: string, cursoData: Curso): Promise<Curso> {
+        await this.cursoRepository.update(id, cursoData);
+        return this.cursoRepository.findOne({ where: { id: parseInt(id) } }); // Atualização aqui
     }
 
-    async remove(id: number): Promise<void> {
-        await this.cursosRepository.delete(id);
+    async remove(id: string): Promise<void> {
+        await this.cursoRepository.delete(id);
     }
 }

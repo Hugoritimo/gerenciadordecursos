@@ -7,7 +7,7 @@ export class Curso {
     id: number;
 
     @Column()
-    titulo: string;  // Aqui está o campo que precisa ser enviado na requisição
+    titulo: string;
 
     @Column('decimal')
     preco: number;
@@ -19,7 +19,7 @@ export class Curso {
     duracao: string;
 
     @Column('decimal', { nullable: true })
-    precoComDesconto: number;
+    precoComDesconto?: number;
 
     @Column('text')
     conteudo: string;

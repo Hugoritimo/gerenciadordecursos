@@ -1,19 +1,25 @@
-/* eslint-disable prettier/prettier */
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Curso } from './curso.entity';
+import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
-@Injectable()
-export class CursosService {
-    constructor(
-        @InjectRepository(Curso)
-        private cursoRepository: Repository<Curso>,
-    ) { }
+@Entity()
+export class Curso {
+    @PrimaryGeneratedColumn()
+    id: number;
 
-    async create(cursoData: Curso): Promise<Curso> {
-        return this.cursoRepository.save(cursoData); // Salva o curso no banco de dados
-    }
+    @Column()
+    titulo: string;
+
+    @Column('decimal')
+    preco: number;
+
+    @Column()
+    descricao: string;
+
+    @Column()
+    duracao: string;
+
+    @Column('decimal', { nullable: true })
+    precoComDesconto?: number;
+
+    @Column('text')
+    conteudo: string;
 }
-export { Curso };
-

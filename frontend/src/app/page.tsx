@@ -30,23 +30,25 @@ export default function Home() {
   const handleAddOrEditCourse = async (courseData) => {
     try {
       if (editingCourse !== null) {
-        // Atualizar curso existente
+        console.log("Editando curso:", courseData); // Verifique o curso que está sendo enviado
         const response = await axios.put(
           `http://localhost:3001/cursos/${editingCourse.id}`,
           courseData
         );
+        console.log("Resposta ao editar curso:", response.data); // Verifique a resposta do backend
         const updatedCourses = [...courses];
         updatedCourses[editingIndex] = response.data;
         setCourses(updatedCourses);
         setEditingCourse(null);
         setEditingIndex(null);
       } else {
-        // Adicionar novo curso
+        console.log("Adicionando novo curso:", courseData); // Verifique os dados que estão sendo enviados
         const response = await axios.post(
           "http://localhost:3001/cursos",
           courseData
         );
-        setCourses([...courses, response.data]);
+        console.log("Novo curso adicionado:", response.data); // Log para verificar a resposta
+        setCourses([...courses, response.data]); // Atualiza a lista de cursos
       }
     } catch (error) {
       console.error("Erro ao adicionar/editar curso:", error);
