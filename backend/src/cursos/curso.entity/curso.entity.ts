@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
@@ -6,11 +7,20 @@ export class Curso {
     id: number;
 
     @Column()
-    nome: string;
+    titulo: string;  // Aqui está o campo que precisa ser enviado na requisição
+
+    @Column('decimal')
+    preco: number;
 
     @Column()
     descricao: string;
 
     @Column()
-    preco: number;
+    duracao: string;
+
+    @Column('decimal', { nullable: true })
+    precoComDesconto: number;
+
+    @Column('text')
+    conteudo: string;
 }

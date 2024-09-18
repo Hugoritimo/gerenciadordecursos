@@ -1,95 +1,103 @@
-import {
-  Box,
-  Button,
-  FormControl,
-  FormLabel,
-  Input,
-  Textarea,
-  Stack,
-  Text,
-  Flex,
-} from "@chakra-ui/react";
+import { useState, useEffect } from "react";
 
 export default function CourseForm({ onSubmit, initialData }) {
+  const [titulo, setTitulo] = useState("");
+  const [preco, setPreco] = useState("");
+  const [descricao, setDescricao] = useState("");
+  const [duracao, setDuracao] = useState("");
+  const [precoComDesconto, setPrecoComDesconto] = useState("");
+  const [conteudo, setConteudo] = useState("");
+
+  useEffect(() => {
+    if (initialData) {
+      setTitulo(initialData.titulo);
+      setPreco(initialData.preco);
+      setDescricao(initialData.descricao);
+      setDuracao(initialData.duracao);
+      setPrecoComDesconto(initialData.precoComDesconto);
+      setConteudo(initialData.conteudo);
+    }
+  }, [initialData]);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const courseData = {
+      titulo,
+      preco: parseFloat(preco),
+      descricao,
+      duracao,
+      precoComDesconto: parseFloat(precoComDesconto),
+      conteudo,
+    };
+    onSubmit(courseData); // Envia os dados para o componente pai
+  };
+
   return (
-    <Flex justify="center" align="center" mt="100px">
-      <Stack direction={["column", "row"]} spacing={10} align="flex-start">
-        {/* Área de Upload da Imagem */}
-        <Box
-          bg="gray.400"
-          p={8}
-          borderRadius="md"
-          textAlign="center"
-          width="200px"
-          height="250px"
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
-        >
-          <Text color="white">upload da imagem</Text>
-        </Box>
-
-        {/* Formulário de Cadastro */}
-        <Box as="form" width="100%" maxW="500px" onSubmit={onSubmit}>
-          <Stack spacing={4}>
-            <FormControl isRequired>
-              <FormLabel fontWeight="bold" color="gray.600">
-                Título do Vídeo
-              </FormLabel>
-              <Input type="text" placeholder="Insira o título" bg="gray.50" />
-            </FormControl>
-
-            <FormControl isRequired>
-              <FormLabel fontWeight="bold" color="gray.600">
-                Carga Horária
-              </FormLabel>
-              <Input
-                type="text"
-                placeholder="Insira a carga horária"
-                bg="gray.50"
-              />
-            </FormControl>
-
-            <FormControl isRequired>
-              <FormLabel fontWeight="bold" color="gray.600">
-                Preço
-              </FormLabel>
-              <Input type="number" placeholder="Insira o preço" bg="gray.50" />
-            </FormControl>
-
-            <FormControl isRequired>
-              <FormLabel fontWeight="bold" color="gray.600">
-                Preço com Desconto
-              </FormLabel>
-              <Input
-                type="number"
-                placeholder="Insira o preço com desconto"
-                bg="gray.50"
-              />
-            </FormControl>
-
-            <FormControl isRequired>
-              <FormLabel fontWeight="bold" color="gray.600">
-                Conteúdo
-              </FormLabel>
-              <Textarea placeholder="Descreva o conteúdo" bg="gray.50" />
-            </FormControl>
-
-            {/* Botão de Cadastro */}
-            <Button
-              type="submit"
-              bg="black"
-              color="white"
-              _hover={{ bg: "gray.800" }}
-              width="100%"
-              py={6} /* Aumentando a altura do botão */
-              fontSize="lg" /* Tornando o texto maior */
-            >
-              Cadastrar Curso
-            </Button>
-          </Stack>
-        </Box>
-      </Stack>
-    </Flex>
+    <form className="space-y-4" onSubmit={handleSubmit}>
+      <div>
+        <label className="block text-gray-800">Título do Curso:</label>
+        <input
+          type="text"
+          value={titulo}
+          onChange={(e) => setTitulo(e.target.value)}
+          className="w-full px-4 py-2 border rounded-md focus:border-primary-color"
+          required
+        />
+      </div>
+      <div>
+        <label className="block text-gray-800">Preço:</label>
+        <input
+          type="number"
+          value={preco}
+          onChange={(e) => setPreco(e.target.value)}
+          className="w-full px-4 py-2 border rounded-md focus:border-primary-color"
+          required
+        />
+      </div>
+      <div>
+        <label className="block text-gray-800">Descrição:</label>
+        <input
+          type="text"
+          value={descricao}
+          onChange={(e) => setDescricao(e.target.value)}
+          className="w-full px-4 py-2 border rounded-md focus:border-primary-color"
+          required
+        />
+      </div>
+      <div>
+        <label className="block text-gray-800">Duração:</label>
+        <input
+          type="text"
+          value={duracao}
+          onChange={(e) => setDuracao(e.target.value)}
+          className="w-full px-4 py-2 border rounded-md focus:border-primary-color"
+          required
+        />
+      </div>
+      <div>
+        <label className="block text-gray-800">Preço com Desconto:</label>
+        <input
+          type="number"
+          value={precoComDesconto}
+          onChange={(e) => setPrecoComDesconto(e.target.value)}
+          className="w-full px-4 py-2 border rounded-md focus:border-primary-color"
+        />
+      </div>
+      <div>
+        <label className="block text-gray-800">Conteúdo:</label>
+        <textarea
+          value={conteudo}
+          onChange={(e) => setConteudo(e.target.value)}
+          className="w-full px-4 py-2 border rounded-md focus:border-primary-color"
+          required
+        />
+      </div>
+      <button
+        type="submit"
+        className="w-full bg-primary-color text-white py-2 rounded-md hover:bg-yellow-600 transition"
+      >
+        {initialData ? "Atualizar Curso" : "Adicionar Curso"}
+      </button>
+    </form>
   );
 }

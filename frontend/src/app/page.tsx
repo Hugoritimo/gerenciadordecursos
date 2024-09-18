@@ -1,124 +1,99 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Box, Container, useToast } from "@chakra-ui/react";
 import CourseForm from "../components/CourseForm";
 import CourseList from "../components/CourseList";
-import Navbar from "../components/UI/Navbar"; // Ajuste o caminho se necessário
-import { useRouter } from "next/navigation"; // Correto para Next.js
+import Navbar from "../components/UI/Navbar";
+import { useRouter } from "next/navigation";
+import axios from "axios"; // Para fazer requisições ao backend
 
 export default function Home() {
   const [courses, setCourses] = useState([]);
   const [editingCourse, setEditingCourse] = useState(null);
   const [editingIndex, setEditingIndex] = useState(null);
-  const toast = useToast(); // Inicializa o Toast
-  const router = useRouter(); // Inicializa o roteador corretamente
+  const router = useRouter();
 
-  // Carregar cursos salvos no localStorage ao iniciar (somente no lado do cliente)
+  // Carregar cursos do backend
   useEffect(() => {
-    if (typeof window !== "undefined") {
+    const fetchCourses = async () => {
       try {
-        const savedCourses = JSON.parse(localStorage.getItem("courses")) || [];
-        setCourses(savedCourses);
+        const response = await axios.get("http://localhost:3001/cursos");
+        setCourses(response.data); // Carregar cursos no estado
       } catch (error) {
-        console.error("Erro ao carregar cursos do localStorage:", error);
+        console.error("Erro ao carregar cursos do backend:", error);
       }
-    }
+    };
+
+    fetchCourses();
   }, []);
 
-  // Atualizar localStorage quando a lista de cursos mudar (somente no lado do cliente)
-  useEffect(() => {
-    if (typeof window !== "undefined" && courses.length > 0) {
-      try {
-        const serializableCourses = courses.map((course) => {
-          return { ...course }; // Garantir que estamos serializando objetos simples
-        });
-        localStorage.setItem("courses", JSON.stringify(serializableCourses));
-      } catch (error) {
-        console.error("Erro ao salvar cursos no localStorage:", error);
+  // Adicionar ou editar curso
+  const handleAddOrEditCourse = async (courseData) => {
+    try {
+      if (editingCourse !== null) {
+        // Atualizar curso existente
+        const response = await axios.put(
+          `http://localhost:3001/cursos/${editingCourse.id}`,
+          courseData
+        );
+        const updatedCourses = [...courses];
+        updatedCourses[editingIndex] = response.data;
+        setCourses(updatedCourses);
+        setEditingCourse(null);
+        setEditingIndex(null);
+      } else {
+        // Adicionar novo curso
+        const response = await axios.post(
+          "http://localhost:3001/cursos",
+          courseData
+        );
+        setCourses([...courses, response.data]);
       }
-    }
-  }, [courses]);
-
-  // Função para adicionar ou editar curso
-  const handleAddOrEditCourse = (courseData) => {
-    if (editingCourse !== null) {
-      const updatedCourses = [...courses];
-      updatedCourses[editingIndex] = courseData;
-      setCourses(updatedCourses);
-      setEditingCourse(null);
-      setEditingIndex(null);
-
-      toast({
-        title: "Curso atualizado.",
-        description: `O curso ${courseData.name} foi atualizado com sucesso.`,
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
-    } else {
-      const newCourse = { ...courseData, id: Date.now().toString() };
-      setCourses([...courses, newCourse]);
-
-      toast({
-        title: "Curso adicionado.",
-        description: `O curso ${newCourse.name} foi adicionado com sucesso.`,
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
+    } catch (error) {
+      console.error("Erro ao adicionar/editar curso:", error);
     }
   };
 
-  // Função para editar curso
+  // Editar curso
   const handleEditCourse = (course, index) => {
     setEditingCourse(course);
     setEditingIndex(index);
   };
 
-  // Função para excluir curso
-  const handleDeleteCourse = (index) => {
-    const updatedCourses = courses.filter((_, i) => i !== index);
-    setCourses(updatedCourses);
-
-    toast({
-      title: "Curso excluído.",
-      description: "O curso foi removido com sucesso.",
-      status: "warning",
-      duration: 3000,
-      isClosable: true,
-    });
+  // Excluir curso
+  const handleDeleteCourse = async (index) => {
+    const courseToDelete = courses[index];
+    try {
+      await axios.delete(`http://localhost:3001/cursos/${courseToDelete.id}`);
+      const updatedCourses = courses.filter((_, i) => i !== index);
+      setCourses(updatedCourses);
+    } catch (error) {
+      console.error("Erro ao excluir curso:", error);
+    }
   };
 
-  // Função para visualizar os detalhes do curso
+  // Visualizar detalhes do curso
   const handleViewDetails = (id) => {
     router.push(`/cursos/${id}`);
   };
 
   return (
-    <Box bg="gray.100" minHeight="100vh" p="2rem">
+    <div className="bg-gray-100 min-h-screen">
       <Navbar />
-      <Container
-        maxW="container.lg"
-        mt="2rem"
-        boxShadow="lg"
-        p="2rem"
-        bg="white"
-        borderRadius="md"
-      >
-        {/* Formulário de Adicionar/Editar Cursos */}
-        <CourseForm
-          onSubmit={handleAddOrEditCourse}
-          initialData={editingCourse}
-        />
-
-        {/* Lista de Cursos */}
-        <CourseList
-          courses={courses}
-          onEdit={handleEditCourse}
-          onDelete={handleDeleteCourse}
-          onViewDetails={handleViewDetails} // Função para ver detalhes
-        />
-      </Container>
-    </Box>
+      <div className="container mx-auto px-4 py-8">
+        <div className="mx-auto bg-white p-6 shadow-lg rounded-md max-w-xl">
+          <h1 className="text-2xl font-bold mb-6">Gerenciar Cursos</h1>
+          <CourseForm
+            onSubmit={handleAddOrEditCourse}
+            initialData={editingCourse}
+          />
+          <CourseList
+            courses={courses}
+            onEdit={handleEditCourse}
+            onDelete={handleDeleteCourse}
+            onViewDetails={handleViewDetails}
+          />
+        </div>
+      </div>
+    </div>
   );
 }

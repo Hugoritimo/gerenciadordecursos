@@ -1,4 +1,5 @@
-import { Module } from '@nestjs/common';
+/* eslint-disable prettier/prettier */
+import { Module, OnModuleInit } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CursosModule } from './cursos/cursos.module';
 
@@ -17,4 +18,8 @@ import { CursosModule } from './cursos/cursos.module';
     CursosModule,
   ],
 })
-export class AppModule { }
+export class AppModule implements OnModuleInit {
+  onModuleInit() {
+    console.log('vou beber uma coca se rodar de primeira.');
+  }
+}
