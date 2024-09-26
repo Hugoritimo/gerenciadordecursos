@@ -1,10 +1,12 @@
-// pages/cursos.tsx
+// Importa `useState` para gerenciar o estado do componente
+// Importa componentes do Chakra UI para layout e estilo
 import { useState } from "react";
 import { Box, Heading } from "@chakra-ui/react";
-import CourseList from "../components/CourseList";
+import CourseList from "../components/CourseList"; // Importa o componente `CourseList` para renderizar a lista de cursos
 
+// Função principal do componente `Cursos`, que exibe a lista de cursos e permite gerenciá-los
 export default function Cursos() {
-  // Lista de cursos inicial
+  // Estado inicial `courses`, contendo uma lista de cursos (como exemplo)
   const [courses, setCourses] = useState([
     {
       name: "Curso A",
@@ -22,23 +24,27 @@ export default function Cursos() {
     },
   ]);
 
-  // Função onDelete para excluir um curso
+  // Função que lida com a exclusão de um curso da lista
   const handleDeleteCourse = (courseToDelete, index) => {
-    // Remove o curso com base no índice
+    // Cria uma nova lista de cursos sem o curso que foi excluído
     const updatedCourses = courses.filter((_, i) => i !== index);
-    setCourses(updatedCourses); // Atualiza o estado com a lista de cursos sem o curso deletado
+    // Atualiza o estado `courses` para refletir a nova lista de cursos
+    setCourses(updatedCourses);
   };
 
+  // Retorna o JSX que será renderizado na página
   return (
     <Box p="4rem">
+      {/* Título da página */}
       <Heading textAlign="center" mb="2rem">
         Sistema de Gerenciamento de Cursos
       </Heading>
 
-      {/* Lista de Cursos - Passando a função onDelete */}
+      {/* Renderiza a lista de cursos usando o componente `CourseList` */}
+      {/* Passa a lista de cursos e a função de exclusão como props */}
       <CourseList
         courses={courses}
-        onDelete={handleDeleteCourse} // Passa a função onDelete para CourseList
+        onDelete={handleDeleteCourse} // Função para excluir curso é passada como prop
       />
     </Box>
   );
